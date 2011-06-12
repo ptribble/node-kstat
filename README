@@ -1,4 +1,3 @@
-
 kstat, a node.js addon for reading kstats
 -----------------------------------------
 
@@ -25,7 +24,18 @@ the kstat framework on Solaris.  The "kstat" module exports a single class,
             name     =>  string denoting name of kstat
             instance =>  integer denoting instance of kstat
             snaptime =>  nanoseconds since boot of this snapshot
+            crtime   =>  nanoseconds since boot that this kstat was created
+            type     =>  integer representing the internal type of kstat
             data     =>  an object containing the named kstat data itself
+
+ list():    Returns the list of all kstats. Each entry is as above, but
+            without the data, so the potentially expensive step of reading
+            the kstat data is omitted.
+
+ getkcid(): Returns, as an int, the curent ID of the kstat chain.
+
+ chainupdate(): Update the kstat chain and return 0 if unchanged or the new
+            chain ID if the chain changed.
 
 For example, here is a simple node.js program that dumps the kstats of
 class 'mib2':
