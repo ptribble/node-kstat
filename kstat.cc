@@ -15,6 +15,8 @@
 #include <sys/var.h>
 #include <sys/dnlc.h>
 
+#define TOSTR(obj) (*String::Utf8Value(obj))
+
 using namespace v8;
 using std::string;
 using std::vector;
@@ -40,6 +42,7 @@ protected:
 	static Handle<Value> List(const Arguments& args);
 	static Handle<Value> Update(const Arguments& args);
 	static Handle<Value> getKCID(const Arguments& args);
+	static Handle<Value> getKstat(const Arguments& args);
 
 
 private:
@@ -136,6 +139,8 @@ KStatReader::Initialize(Handle<Object> target)
 	NODE_SET_PROTOTYPE_METHOD(templ, "list", KStatReader::List);
 
 	NODE_SET_PROTOTYPE_METHOD(templ, "getkcid", KStatReader::getKCID);
+
+	NODE_SET_PROTOTYPE_METHOD(templ, "getkstat", KStatReader::getKstat);
 
 	NODE_SET_PROTOTYPE_METHOD(templ, "chainupdate", KStatReader::Update);
 
@@ -755,6 +760,30 @@ KStatReader::getKCID(const Arguments& args)
 {
 	KStatReader *k = ObjectWrap::Unwrap<KStatReader>(args.Holder());
 	return (Integer::New(k->getkcid()));
+}
+
+/*
+ * FIXME check the arguments are of the correct number and type
+ */
+Handle<Value>
+KStatReader::getKstat(const Arguments& args)
+{
+	KStatReader *k = ObjectWrap::Unwrap<KStatReader>(args.Holder());
+	string *imodule = stringMember(args[0], "module", "");
+	string module = *imodule;
+	int instance = intMember(args[0], "instance", -1);
+	string *iname = stringMember(args[0], "name", "");
+	string name = *iname;
+	kstat_t *ksp = kstat_lookup(k->ksr_ctl, (char *)module.c_str(), instance, (char *)name.c_str());
+	if (ksp == NULL) {
+		Handle<Object> rval = Object::New();
+		rval->Set(String::New("error"), String::New("invalid kstat"));
+		rval->Set(String::New("module"), String::New(module.c_str()));
+		rval->Set(String::New("instance"), Number::New(instance));
+		rval->Set(String::New("name"), String::New(name.c_str()));
+		return (rval);
+	}
+	return (k->read(ksp));
 }
 
 extern "C" void

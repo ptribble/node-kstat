@@ -3,9 +3,12 @@ var kstat = require('kstat');
 
 var app = module.exports = express.createServer();
 
+var staticfilter = {};
+var staticreader = new kstat.Reader(staticfilter);
+
 // Routes
 
-// jkstat getKstat() interface
+// new jkstat getKstat() interface
 app.get('/kstat/get/:module/:instance/:name', function(req, res){
 
         var filter = {};
@@ -14,9 +17,7 @@ app.get('/kstat/get/:module/:instance/:name', function(req, res){
         filter["name"] = req.params.name;
 	filter["instance"] = parseInt(req.params.instance, 10);
 
-        var reader = new kstat.Reader(filter);
-
-	var results = reader.read();
+	var results = staticreader.getkstat(filter);
 
         // Set response header to enable cross-site requests
         res.header('Access-Control-Allow-Origin', '*');
@@ -61,11 +62,11 @@ app.get('/kstat/mget/:module/:instance/:name', function(req, res){
 // jkstat getKstats() interface
 app.get('/kstat/list', function(req, res){
 
-        var filter = {};
+        //var filter = {};
 
-        var reader = new kstat.Reader(filter);
+        //var reader = new kstat.Reader(filter);
 
-	var results = reader.list();
+	var results = staticreader.list();
 
         // Set response header to enable cross-site requests
         res.header('Access-Control-Allow-Origin', '*');
@@ -77,11 +78,11 @@ app.get('/kstat/list', function(req, res){
 // jkstat chainupdate() interface
 app.get('/kstat/chainupdate', function(req, res){
 
-        var filter = {};
+        //var filter = {};
 
-        var reader = new kstat.Reader(filter);
+        //var reader = new kstat.Reader(filter);
 
-	var results = reader.chainupdate();
+	var results = staticreader.chainupdate();
 
         // Set response header to enable cross-site requests
         res.header('Access-Control-Allow-Origin', '*');
@@ -93,11 +94,11 @@ app.get('/kstat/chainupdate', function(req, res){
 // jkstat getKCID() interface
 app.get('/kstat/getkcid', function(req, res){
 
-        var filter = {};
+        //var filter = {};
 
-        var reader = new kstat.Reader(filter);
+        //var reader = new kstat.Reader(filter);
 
-	var results = reader.getkcid();
+	var results = staticreader.getkcid();
 
         // Set response header to enable cross-site requests
         res.header('Access-Control-Allow-Origin', '*');
