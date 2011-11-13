@@ -1,3 +1,8 @@
+//
+// A jkstat server that can be used by the jkstat client
+// jkstat remotebrowser -S http://hostname:3000/kstat
+//
+
 var express = require('express');
 var kstat = require('kstat');
 
@@ -62,10 +67,6 @@ app.get('/kstat/mget/:module/:instance/:name', function(req, res){
 // jkstat getKstats() interface
 app.get('/kstat/list', function(req, res){
 
-        //var filter = {};
-
-        //var reader = new kstat.Reader(filter);
-
 	var results = staticreader.list();
 
         // Set response header to enable cross-site requests
@@ -78,10 +79,6 @@ app.get('/kstat/list', function(req, res){
 // jkstat chainupdate() interface
 app.get('/kstat/chainupdate', function(req, res){
 
-        //var filter = {};
-
-        //var reader = new kstat.Reader(filter);
-
 	var results = staticreader.chainupdate();
 
         // Set response header to enable cross-site requests
@@ -93,10 +90,6 @@ app.get('/kstat/chainupdate', function(req, res){
 
 // jkstat getKCID() interface
 app.get('/kstat/getkcid', function(req, res){
-
-        //var filter = {};
-
-        //var reader = new kstat.Reader(filter);
 
 	var results = staticreader.getkcid();
 
@@ -111,5 +104,5 @@ app.get('/kstat/getkcid', function(req, res){
 
 if (!module.parent) {
   app.listen(3000);
-  console.log("jkstat server listening on port %d", app.address().port);
+  console.log("jkstat server http://hostname:%d/kstat running", app.address().port);
 }
