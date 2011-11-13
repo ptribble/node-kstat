@@ -5,7 +5,7 @@
 	"homepage":	"https://github.com/bcantrill/node-kstat",
 	"author":	"Joyent (joyent.com)",
 	"engines":	{ "node": "*" },
-	"main":		"build/default/kstat",
+	"main":		"build/Release/kstat",
 	"scripts": {
 	    "install": "node-waf configure build"
 	}
