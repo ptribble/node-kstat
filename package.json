@@ -1,12 +1,9 @@
 {
 	"name":		"kstat",
-	"version":	"0.0.1",
+	"version":	"0.0.2",
 	"description":	"Solaris libkstat bindings",
-	"homepage":	"https://github.com/bcantrill/node-kstat",
-	"author":	"Joyent (joyent.com)",
+	"homepage":	"https://github.com/ptribble/node-kstat",
+	"author":	"Peter Tribble",
 	"engines":	{ "node": "*" },
-	"main":		"build/Release/kstat",
-	"scripts": {
-	    "install": "node-waf configure build"
-	}
+	"main":		"build/Release/kstat"
 }
