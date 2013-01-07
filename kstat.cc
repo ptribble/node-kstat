@@ -232,6 +232,7 @@ KStatReader::data_named(kstat_t *ksp)
 	assert(ksp->ks_type == KSTAT_TYPE_NAMED);
 
 	for (i = 0; i < ksp->ks_ndata; i++, nm++) {
+		val = String::New("null");
 		switch (nm->data_type) {
 		case KSTAT_DATA_CHAR:
 			val = Number::New(nm->value.c[0]);
