@@ -26,7 +26,7 @@ public:
 	static void Initialize(Handle<Object> target);
 
 protected:
-	static Persistent<FunctionTemplate> KStatReader::templ;
+	static Persistent<FunctionTemplate> templ;
 
 	KStatReader(string *module, string *classname,
 	    string *name, int instance);
@@ -226,13 +226,13 @@ KStatReader::data_named(kstat_t *ksp)
 {
 	Handle<Object> data = Object::New();
 	kstat_named_t *nm = KSTAT_NAMED_PTR(ksp);
-	int i;
+	Handle<Value> val;
+	unsigned int i;
 
 	assert(ksp->ks_type == KSTAT_TYPE_NAMED);
 
 	for (i = 0; i < ksp->ks_ndata; i++, nm++) {
-		Handle<Value> val;
-
+		val = String::New("null");
 		switch (nm->data_type) {
 		case KSTAT_DATA_CHAR:
 			val = Number::New(nm->value.c[0]);
@@ -255,7 +255,11 @@ KStatReader::data_named(kstat_t *ksp)
 			break;
 
 		case KSTAT_DATA_STRING:
-			val = String::New(KSTAT_NAMED_STR_PTR(nm));
+			if (KSTAT_NAMED_STR_PTR(nm) == NULL) {
+				val = String::New("null");
+			} else {
+				val = String::New(KSTAT_NAMED_STR_PTR(nm));
+			}
 			break;
 
 		default:
@@ -349,6 +353,8 @@ KStatReader::data_raw(kstat_t *ksp)
 	    }
 	    if (!strcmp(ksp->ks_name, "vminfo")) {
 		vminfo_t *vminfop = (vminfo_t *)(ksp->ks_data);
+		data->Set(String::New("updates"),
+			Number::New(vminfop->updates));
 		data->Set(String::New("freemem"),
 			Number::New(vminfop->freemem));
 		data->Set(String::New("swap_resv"),
@@ -691,7 +697,7 @@ KStatReader::Read(const Arguments& args)
 	KStatReader *k = ObjectWrap::Unwrap<KStatReader>(args.Holder());
 	Handle<Array> rval;
 	HandleScope scope;
-	int i;
+	unsigned int i;
 
 	if (k->update() == -1)
 		return (k->error("failed to update kstat chain"));
@@ -731,7 +737,7 @@ KStatReader::List(const Arguments& args)
 	KStatReader *k = ObjectWrap::Unwrap<KStatReader>(args.Holder());
 	Handle<Array> rval;
 	HandleScope scope;
-	int i;
+	unsigned int i;
 
 	if (k->update() == -1)
 		return (k->error("failed to update kstat chain"));
