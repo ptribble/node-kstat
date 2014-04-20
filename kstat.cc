@@ -797,3 +797,5 @@ init (Handle<Object> target)
 {
 	KStatReader::Initialize(target);
 }
+
+NODE_MODULE(kstat, init);

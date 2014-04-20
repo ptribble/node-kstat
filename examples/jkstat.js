@@ -6,7 +6,7 @@
 var express = require('express');
 var kstat = require('kstat');
 
-var app = module.exports = express.createServer();
+var app = express();
 
 var staticfilter = {};
 var staticreader = new kstat.Reader(staticfilter);
@@ -103,6 +103,6 @@ app.get('/kstat/getkcid', function(req, res){
 // Only listen on $ node app.js
 
 if (!module.parent) {
-  app.listen(3000);
-  console.log("jkstat server http://hostname:%d/kstat running", app.address().port);
+  var server = app.listen(3000);
+  console.log("jkstat server http://hostname:%d/kstat running", server.address().port);
 }
