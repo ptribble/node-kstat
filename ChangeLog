@@ -1,0 +1,9 @@
+Changes, most recent at the top
+
+Reworked to function on newer versions of Node. The original was stuck at
+v0.10, due to changes in v0.12. This update brings support up to v10, but
+not v12 or later.
+
+This update based on the following fork:
+  https://github.com/nextorigin/node-kstat
+with my changes to add JKstat support.

@@ -1,0 +1,16 @@
+The primary target of this module is to act as a server for
+JKstat
+
+To build and run a server:
+
+npm install express
+cd node_modules
+git clone https://github.com/ptribble/node-kstat
+mv node-kstat kstat
+cd kstat
+npm build .
+cd ../..
+node node_modules/kstat/examples/jkstat.js
+
+IMPORTANT: The current version is supported on Node v0.12 through Node v10.
+Newer and older versions of Node won't work.

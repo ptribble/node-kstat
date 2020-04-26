@@ -1,9 +1,9 @@
 {
 	"name":		"kstat",
-	"version":	"0.4.0",
+	"version":	"1.0.0",
 	"description":	"Solaris libkstat bindings",
 	"homepage":	"https://github.com/ptribble/node-kstat",
 	"author":	"Peter Tribble",
-	"engines":	{ "node": "*" },
+	"engines":	{ "node": "0.12 - 10" },
 	"main":		"build/Release/kstat"
 }
