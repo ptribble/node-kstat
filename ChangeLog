@@ -1,5 +1,9 @@
 Changes, most recent at the top
 
+Reworked again to add support for Node v12. There are a lot of deprecation
+warnings (it doesn't understand Maybe), but this version will also work
+on Node v10; it won't work on Node v14 or later.
+
 Reworked to function on newer versions of Node. The original was stuck at
 v0.10, due to changes in v0.12. This update brings support up to v10, but
 not v12 or later.

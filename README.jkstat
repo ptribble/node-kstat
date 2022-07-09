@@ -12,5 +12,12 @@ npm build .
 cd ../..
 node node_modules/kstat/examples/jkstat.js
 
-IMPORTANT: The current version is supported on Node v0.12 through Node v10.
-Newer and older versions of Node won't work.
+If you want to use Node v0.12 through Node v10, then replace kstat.cc
+with v10-kstat.cc
+
+The current kstat.cc is supported by Node v10 and v12, but not newer
+versions.
+
+To get jkstat to talk to this server, the invocation is:
+
+jkstat remotebrowser -S http://hostname:3000/kstat

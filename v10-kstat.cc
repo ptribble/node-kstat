@@ -20,7 +20,7 @@ using std::vector;
 
 class KStatReader : public node::ObjectWrap {
 public:
-	static void Initialize(Local<Object> exports);
+	static void Initialize(Handle<Object> exports);
 
 protected:
 	static Persistent<FunctionTemplate> templ;
@@ -28,9 +28,9 @@ protected:
 	KStatReader(string *module, string *classname,
 	    string *name, int instance);
 	void close();
-	Local<Value> error(Isolate *isolate, const char *fmt, ...);
-	Local<Value> read(Isolate *, kstat_t *);
-	Local<Value> list(Isolate *, kstat_t *);
+	Handle<Value> error(Isolate *isolate, const char *fmt, ...);
+	Handle<Value> read(Isolate *, kstat_t *);
+	Handle<Value> list(Isolate *, kstat_t *);
 	bool matches(kstat_t *, string *, string *, string *, int64_t);
 	int update();
 	int getkcid();
@@ -48,17 +48,17 @@ protected:
 private:
 	static string *stringMember(Isolate *, Local<Value>, char *, char *);
 	static int64_t intMember(Isolate *, Local<Value>, char *, int64_t);
-	Local<Object> data_raw_cpu_stat(Isolate *, kstat_t *);
-	Local<Object> data_raw_var(Isolate *, kstat_t *);
-	Local<Object> data_raw_ncstats(Isolate *, kstat_t *);
-	Local<Object> data_raw_sysinfo(Isolate *, kstat_t *);
-	Local<Object> data_raw_vminfo(Isolate *, kstat_t *);
-	Local<Object> data_raw_mntinfo(Isolate *, kstat_t *);
-	Local<Object> data_raw(Isolate *, kstat_t *);
-	Local<Object> data_named(Isolate *, kstat_t *);
-	Local<Object> data_intr(Isolate *, kstat_t *);
-	Local<Object> data_io(Isolate *, kstat_t *);
-	Local<Object> data_timer(Isolate *, kstat_t *);
+	Handle<Object> data_raw_cpu_stat(Isolate *, kstat_t *);
+	Handle<Object> data_raw_var(Isolate *, kstat_t *);
+	Handle<Object> data_raw_ncstats(Isolate *, kstat_t *);
+	Handle<Object> data_raw_sysinfo(Isolate *, kstat_t *);
+	Handle<Object> data_raw_vminfo(Isolate *, kstat_t *);
+	Handle<Object> data_raw_mntinfo(Isolate *, kstat_t *);
+	Handle<Object> data_raw(Isolate *, kstat_t *);
+	Handle<Object> data_named(Isolate *, kstat_t *);
+	Handle<Object> data_intr(Isolate *, kstat_t *);
+	Handle<Object> data_io(Isolate *, kstat_t *);
+	Handle<Object> data_timer(Isolate *, kstat_t *);
 
 	string *ksr_module;
 	string *ksr_class;
@@ -146,7 +146,7 @@ KStatReader::update()
 }
 
 void
-KStatReader::Initialize(Local<Object> exports)
+KStatReader::Initialize(Handle<Object> exports)
 {
 	v8::Isolate* isolate;
   isolate = exports->GetIsolate();
@@ -164,7 +164,7 @@ KStatReader::Initialize(Local<Object> exports)
 
 	templ.Reset(isolate, localTempl);
 
-	exports->Set(String::NewFromUtf8(isolate, "Reader", String::kInternalizedString), localTempl->GetFunction(isolate->GetCurrentContext()).ToLocalChecked());
+	exports->Set(String::NewFromUtf8(isolate, "Reader", String::kInternalizedString), localTempl->GetFunction());
 }
 
 string *
@@ -179,7 +179,7 @@ KStatReader::stringMember(Isolate *isolate, Local<Value> value, char *member, ch
 	if (!v->IsString())
 		return (new string(deflt));
 
-	String::Utf8Value val(isolate, v);
+	String::Utf8Value val(v);
 	return (new string(*val));
 }
 
@@ -216,7 +216,7 @@ KStatReader::New(const FunctionCallbackInfo<Value>& args)
 	args.GetReturnValue().Set (args.This());
 }
 
-Local<Value>
+Handle<Value>
 KStatReader::error(Isolate *isolate, const char *fmt, ...)
 {
 	char buf[1024], buf2[1024];
@@ -240,10 +240,10 @@ KStatReader::error(Isolate *isolate, const char *fmt, ...)
 	return (isolate->ThrowException(Exception::Error(String::NewFromUtf8(isolate, err))));
 }
 
-Local<Object>
+Handle<Object>
 KStatReader::data_raw_cpu_stat(Isolate *isolate, kstat_t *ksp)
 {
-	Local<Object> data = Object::New(isolate);
+	Handle<Object> data = Object::New(isolate);
 
 	assert(ksp->ks_data_size == sizeof (cpu_stat_t));
 
@@ -361,10 +361,10 @@ KStatReader::data_raw_cpu_stat(Isolate *isolate, kstat_t *ksp)
 	return (data);
 }
 
-Local<Object>
+Handle<Object>
 KStatReader::data_raw_var(Isolate *isolate, kstat_t *ksp)
 {
-	Local<Object> data = Object::New(isolate);
+	Handle<Object> data = Object::New(isolate);
 
 	assert(ksp->ks_data_size == sizeof (struct var));
 
@@ -389,10 +389,10 @@ KStatReader::data_raw_var(Isolate *isolate, kstat_t *ksp)
 	return (data);
 }
 
-Local<Object>
+Handle<Object>
 KStatReader::data_raw_ncstats(Isolate *isolate, kstat_t *ksp)
 {
-	Local<Object> data = Object::New(isolate);
+	Handle<Object> data = Object::New(isolate);
 
 	assert(ksp->ks_data_size == sizeof (struct ncstats));
 
@@ -411,10 +411,10 @@ KStatReader::data_raw_ncstats(Isolate *isolate, kstat_t *ksp)
 	return (data);
 }
 
-Local<Object>
+Handle<Object>
 KStatReader::data_raw_sysinfo(Isolate *isolate, kstat_t *ksp)
 {
-	Local<Object> data = Object::New(isolate);
+	Handle<Object> data = Object::New(isolate);
 
 	assert(ksp->ks_data_size == sizeof (sysinfo_t));
 
@@ -430,10 +430,10 @@ KStatReader::data_raw_sysinfo(Isolate *isolate, kstat_t *ksp)
 	return (data);
 }
 
-Local<Object>
+Handle<Object>
 KStatReader::data_raw_vminfo(Isolate *isolate, kstat_t *ksp)
 {
-	Local<Object> data = Object::New(isolate);
+	Handle<Object> data = Object::New(isolate);
 
 	assert(ksp->ks_data_size == sizeof (vminfo_t));
 
@@ -449,10 +449,10 @@ KStatReader::data_raw_vminfo(Isolate *isolate, kstat_t *ksp)
 	return (data);
 }
 
-Local<Object>
+Handle<Object>
 KStatReader::data_raw_mntinfo(Isolate *isolate, kstat_t *ksp)
 {
-	Local<Object> data = Object::New(isolate);
+	Handle<Object> data = Object::New(isolate);
 
 	assert(ksp->ks_data_size == sizeof (struct mntinfo_kstat));
 
@@ -512,10 +512,10 @@ KStatReader::data_raw_mntinfo(Isolate *isolate, kstat_t *ksp)
 	return (data);
 }
 
-Local<Object>
+Handle<Object>
 KStatReader::data_raw(Isolate *isolate, kstat_t *ksp)
 {
-	Local<Object> data;
+	Handle<Object> data;
 
 	assert(ksp->ks_type == KSTAT_TYPE_RAW);
 
@@ -538,17 +538,17 @@ KStatReader::data_raw(Isolate *isolate, kstat_t *ksp)
 	return (data);
 }
 
-Local<Object>
+Handle<Object>
 KStatReader::data_named(Isolate *isolate, kstat_t *ksp)
 {
-	Local<Object> data = Object::New(isolate);
+	Handle<Object> data = Object::New(isolate);
 	kstat_named_t *nm = KSTAT_NAMED_PTR(ksp);
 	unsigned int i;
 
 	assert(ksp->ks_type == KSTAT_TYPE_NAMED);
 
 	for (i = 0; i < ksp->ks_ndata; i++, nm++) {
-		Local<Value> val;
+		Handle<Value> val;
 
 		switch (nm->data_type) {
 		case KSTAT_DATA_CHAR:
@@ -589,10 +589,10 @@ KStatReader::data_named(Isolate *isolate, kstat_t *ksp)
 	return (data);
 }
 
-Local<Object>
+Handle<Object>
 KStatReader::data_intr(Isolate *isolate, kstat_t *ksp)
 {
-	Local<Object> data = Object::New(isolate);
+	Handle<Object> data = Object::New(isolate);
 	kstat_intr_t *intr = KSTAT_INTR_PTR(ksp);
 
 	assert(ksp->ks_type == KSTAT_TYPE_INTR);
@@ -611,10 +611,10 @@ KStatReader::data_intr(Isolate *isolate, kstat_t *ksp)
 	return (data);
 }
 
-Local<Object>
+Handle<Object>
 KStatReader::data_io(Isolate *isolate, kstat_t *ksp)
 {
-	Local<Object> data = Object::New(isolate);
+	Handle<Object> data = Object::New(isolate);
 	kstat_io_t *io = KSTAT_IO_PTR(ksp);
 
 	assert(ksp->ks_type == KSTAT_TYPE_IO);
@@ -638,10 +638,10 @@ KStatReader::data_io(Isolate *isolate, kstat_t *ksp)
 	return (data);
 }
 
-Local<Object>
+Handle<Object>
 KStatReader::data_timer(Isolate *isolate, kstat_t *ksp)
 {
-	Local<Object> data = Object::New(isolate);
+	Handle<Object> data = Object::New(isolate);
 	kstat_timer_t *timer = KSTAT_TIMER_PTR(ksp);
 
 	assert(ksp->ks_type == KSTAT_TYPE_TIMER);
@@ -658,11 +658,11 @@ KStatReader::data_timer(Isolate *isolate, kstat_t *ksp)
 	return (data);
 }
 
-Local<Value>
+Handle<Value>
 KStatReader::read(Isolate *isolate, kstat_t *ksp)
 {
-	Local<Object> rval = Object::New(isolate);
-	Local<Object> data;
+	Handle<Object> rval = Object::New(isolate);
+	Handle<Object> data;
 
 	rval->Set(String::NewFromUtf8(isolate, "class"), String::NewFromUtf8(isolate, ksp->ks_class));
 	rval->Set(String::NewFromUtf8(isolate, "module"), String::NewFromUtf8(isolate, ksp->ks_module));
@@ -718,11 +718,11 @@ KStatReader::read(Isolate *isolate, kstat_t *ksp)
 }
 
 
-Local<Value>
+Handle<Value>
 KStatReader::list(Isolate *isolate, kstat_t *ksp)
 {
-	Local<Object> rval = Object::New(isolate);
-	Local<Object> data;
+	Handle<Object> rval = Object::New(isolate);
+	Handle<Object> data;
 
 	rval->Set(String::NewFromUtf8(isolate, "class"), String::NewFromUtf8(isolate, ksp->ks_class));
 	rval->Set(String::NewFromUtf8(isolate, "module"), String::NewFromUtf8(isolate, ksp->ks_module));
@@ -768,7 +768,7 @@ KStatReader::getKstat(const FunctionCallbackInfo<Value>& args)
 	string name = *iname;
 	kstat_t *ksp = kstat_lookup(k->ksr_ctl, (char *)module.c_str(), instance, (char *)name.c_str());
 	if (ksp == NULL) {
-		Local<Object> rval = Object::New(isolate);
+		Handle<Object> rval = Object::New(isolate);
 		rval->Set(String::NewFromUtf8(isolate, "error"), String::NewFromUtf8(isolate, "invalid kstat"));
 		rval->Set(String::NewFromUtf8(isolate, "module"), String::NewFromUtf8(isolate, module.c_str()));
 		rval->Set(String::NewFromUtf8(isolate, "instance"), Number::New(isolate, instance));
@@ -792,7 +792,7 @@ void
 KStatReader::List(const FunctionCallbackInfo<Value>& args)
 {
 	KStatReader *k = ObjectWrap::Unwrap<KStatReader>(args.Holder());
-	Local<Array> rval;
+	Handle<Array> rval;
 	Isolate *isolate = args.GetIsolate();
 	ReturnValue<Value> returnValue = args.GetReturnValue();
 	unsigned int i;
@@ -805,7 +805,7 @@ KStatReader::List(const FunctionCallbackInfo<Value>& args)
 	try {
 		for (i = 0; i < k->ksr_kstats.size(); i++)
 			rval->Set(i, k->list(isolate, k->ksr_kstats[i]));
-	} catch (Local<Value> err) {
+	} catch (Handle<Value> err) {
 		returnValue.Set (err);
 	}
 
@@ -816,7 +816,7 @@ void
 KStatReader::Read(const FunctionCallbackInfo<Value>& args)
 {
 	KStatReader *k = ObjectWrap::Unwrap<KStatReader>(args.Holder());
-	Local<Array> rval;
+	Handle<Array> rval;
 	Isolate *isolate = args.GetIsolate();
 	ReturnValue<Value> returnValue = args.GetReturnValue();
 	unsigned int i, j;
@@ -842,7 +842,7 @@ KStatReader::Read(const FunctionCallbackInfo<Value>& args)
 
 			rval->Set(j++, k->read(isolate, k->ksr_kstats[i]));
 		}
-	} catch (Local<Value> err) {
+	} catch (Handle<Value> err) {
 		delete rmodule;
 		delete rclass;
 		delete rname;
@@ -856,7 +856,7 @@ KStatReader::Read(const FunctionCallbackInfo<Value>& args)
 }
 
 extern "C" void
-init(Local<Object> exports)
+init(Handle<Object> exports)
 {
 	KStatReader::Initialize(exports);
 }
