@@ -32,7 +32,7 @@ the kstat framework on Solaris.  The "kstat" module exports a single class,
             without the data, so the potentially expensive step of reading
             the kstat data is omitted.
 
- getkcid(): Returns, as an int, the curent ID of the kstat chain.
+ getkcid(): Returns, as an int, the current ID of the kstat chain.
 
  chainupdate(): Update the kstat chain and return 0 if unchanged or the new
             chain ID if the chain changed.
